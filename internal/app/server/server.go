@@ -50,18 +50,26 @@ type CompressionMiddleware interface {
 }
 
 func Start(cxt context.Context, config *config.Config) error {
-	err := runMigrate(config)
+	pool, err := InitPool(cxt, config)
 	if err != nil {
 		return err
 	}
-	userRepo, err := repository.NewUserRepository(cxt, config)
+	err = InitTables(cxt, pool)
+	if err != nil {
+		return err
+	}
+	// err := runMigrate(config)
+	// if err != nil {
+	// 	return err
+	// }
+	userRepo, err := repository.NewUserRepository(cxt, config, pool)
 	if err != nil {
 		return err
 	}
 	userService := usecase.NewUserService(config, userRepo)
 	userHandler := handlers.NewUserHandler(config, userService)
 
-	balanceOperationRepo, err := repository.NewBalanceOperationRepository(cxt, config)
+	balanceOperationRepo, err := repository.NewBalanceOperationRepository(cxt, config, pool)
 	if err != nil {
 		return err
 	}

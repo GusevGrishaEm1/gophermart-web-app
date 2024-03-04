@@ -5,6 +5,8 @@ import (
 	"gophermart/internal/app/config"
 	"gophermart/internal/app/entity"
 	"gophermart/internal/app/infrastructure/repository/postgres"
+
+	"github.com/jackc/pgx/v5/pgxpool"
 )
 
 type BalanceOperationRepository interface {
@@ -17,6 +19,6 @@ type BalanceOperationRepository interface {
 	UpdateOrders(ctx context.Context, balanceOperation []*entity.BalanceOperation) error
 }
 
-func NewBalanceOperationRepository(ctx context.Context, config *config.Config) (BalanceOperationRepository, error) {
-	return postgres.NewBalanceOperationRepository(ctx, config)
+func NewBalanceOperationRepository(ctx context.Context, config *config.Config, pool *pgxpool.Pool) (BalanceOperationRepository, error) {
+	return postgres.NewBalanceOperationRepository(ctx, config, pool)
 }

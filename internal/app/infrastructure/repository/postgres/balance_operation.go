@@ -16,11 +16,7 @@ type BalanceOperationRepository struct {
 	pool *pgxpool.Pool
 }
 
-func NewBalanceOperationRepository(ctx context.Context, config *config.Config) (*BalanceOperationRepository, error) {
-	pool, err := pgxpool.New(ctx, config.DatabaseURI)
-	if err != nil {
-		return nil, err
-	}
+func NewBalanceOperationRepository(ctx context.Context, config *config.Config, pool *pgxpool.Pool) (*BalanceOperationRepository, error) {
 	return &BalanceOperationRepository{pool: pool}, nil
 }
 
