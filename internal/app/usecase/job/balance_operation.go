@@ -20,7 +20,7 @@ type BalanceOperationJob struct {
 func NewBalanceOperationJob(config *config.Config, r repository.BalanceOperationRepository) *BalanceOperationJob {
 	return &BalanceOperationJob{
 		make(chan *entity.BalanceOperation, 1024),
-		&webapi.AccrualWebAPI{C: config},
+		&webapi.AccrualWebAPI{Config: config},
 		r,
 	}
 }
