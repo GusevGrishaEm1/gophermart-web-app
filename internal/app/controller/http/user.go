@@ -4,8 +4,8 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
-	"gophermart/cmd/gophermart/internal/app/config"
-	customerr "gophermart/cmd/gophermart/internal/app/error"
+	"gophermart/internal/app/config"
+	customerr "gophermart/internal/app/error"
 	"io"
 	"net/http"
 )
