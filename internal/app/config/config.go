@@ -13,6 +13,7 @@ type Config struct {
 	RunAddress          string
 	DatabaseURI         string
 	AcrualSystemAddress string
+	IsMigrate           bool
 }
 
 func New() *Config {
@@ -33,6 +34,7 @@ func (c *Config) setDefault() {
 	if c.AcrualSystemAddress == "" {
 		c.AcrualSystemAddress = "localhost:8081"
 	}
+	c.IsMigrate = false
 }
 
 func (c *Config) setByEnvs() {
@@ -57,4 +59,7 @@ func (c *Config) setByFlags() {
 	var acrualSystemAddress string
 	flag.StringVar(&acrualSystemAddress, "r", "localhost:8081", "accrual system address")
 	c.AcrualSystemAddress = acrualSystemAddress
+	var isMigrate bool
+	flag.BoolVar(&isMigrate, "m", false, "is migrate")
+	c.IsMigrate = isMigrate
 }

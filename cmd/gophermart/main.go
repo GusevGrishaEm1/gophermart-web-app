@@ -12,7 +12,6 @@ import (
 func main() {
 	ctx := context.Background()
 	config := config.New()
-	var err error
 	// db, err := sql.Open("postgres", config.DatabaseURI+"?sslmode=disable")
 	// if err != nil {
 	// 	panic(err)
@@ -31,7 +30,7 @@ func main() {
 	// if err != nil {
 	// 	panic(err)
 	// }
-	err = server.Start(ctx, config)
+	err := server.Start(ctx, config)
 	if err != nil {
 		panic(err)
 	}
