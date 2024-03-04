@@ -16,10 +16,6 @@ type UserRepository struct {
 }
 
 func NewUserRepository(ctx context.Context, config *config.Config, pool *pgxpool.Pool) (*UserRepository, error) {
-	pool, err := pgxpool.New(ctx, config.DatabaseURI)
-	if err != nil {
-		return nil, err
-	}
 	return &UserRepository{pool: pool}, nil
 }
 
