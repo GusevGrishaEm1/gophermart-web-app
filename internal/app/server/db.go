@@ -39,6 +39,5 @@ func InitTables(ctx context.Context, pool *pgxpool.Pool) error {
 }
 
 func InitPool(ctx context.Context, config *config.Config) (*pgxpool.Pool, error) {
-	initPool, err := pgxpool.New(ctx, config.DatabaseURI)
-	return initPool, err
+	return pgxpool.New(ctx, config.DatabaseURI)
 }
