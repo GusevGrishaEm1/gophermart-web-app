@@ -2,10 +2,10 @@ package job
 
 import (
 	"context"
-	"gophermart/cmd/gophermart/internal/app/config"
-	"gophermart/cmd/gophermart/internal/app/entity"
-	"gophermart/cmd/gophermart/internal/app/infrastructure/repository"
-	"gophermart/cmd/gophermart/internal/app/infrastructure/webapi"
+	"gophermart/internal/app/config"
+	"gophermart/internal/app/entity"
+	"gophermart/internal/app/infrastructure/repository"
+	"gophermart/internal/app/infrastructure/webapi"
 	"time"
 )
 

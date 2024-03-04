@@ -3,8 +3,8 @@ package webapi
 import (
 	"encoding/json"
 	"errors"
-	"gophermart/cmd/gophermart/internal/app/config"
-	"gophermart/cmd/gophermart/internal/app/entity"
+	"gophermart/internal/app/config"
+	"gophermart/internal/app/entity"
 	"io"
 	"net/http"
 

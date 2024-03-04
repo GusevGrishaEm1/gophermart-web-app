@@ -2,9 +2,9 @@ package repository
 
 import (
 	"context"
-	"gophermart/cmd/gophermart/internal/app/config"
-	"gophermart/cmd/gophermart/internal/app/entity"
-	"gophermart/cmd/gophermart/internal/app/infrastructure/repository/postgres"
+	"gophermart/internal/app/config"
+	"gophermart/internal/app/entity"
+	"gophermart/internal/app/infrastructure/repository/postgres"
 )
 
 type UserRepository interface {

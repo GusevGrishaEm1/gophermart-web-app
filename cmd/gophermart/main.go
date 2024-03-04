@@ -2,8 +2,8 @@ package main
 
 import (
 	"context"
-	"gophermart/cmd/gophermart/internal/app/config"
-	"gophermart/cmd/gophermart/internal/app/server"
+	"gophermart/internal/app/config"
+	"gophermart/internal/app/server"
 
 	"database/sql"
 

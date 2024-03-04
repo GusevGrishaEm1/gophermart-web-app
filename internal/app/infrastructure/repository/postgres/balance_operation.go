@@ -3,9 +3,9 @@ package postgres
 import (
 	"context"
 	"errors"
-	"gophermart/cmd/gophermart/internal/app/config"
-	"gophermart/cmd/gophermart/internal/app/entity"
-	customerr "gophermart/cmd/gophermart/internal/app/error"
+	"gophermart/internal/app/config"
+	"gophermart/internal/app/entity"
+	customerr "gophermart/internal/app/error"
 	"net/http"
 
 	"github.com/jackc/pgx/v5"
