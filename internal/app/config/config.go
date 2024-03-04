@@ -18,8 +18,8 @@ type Config struct {
 
 func New() *Config {
 	config := &Config{}
-	config.setByEnvs()
 	config.setByFlags()
+	config.setByEnvs()
 	config.setDefault()
 	return config
 }
