@@ -58,8 +58,8 @@ func (r *BalanceOperationRepository) FindOrdersByUser(ctx context.Context, userI
 func (r *BalanceOperationRepository) GetBalanceByUser(ctx context.Context, userID int) (int, int, error) {
 	query := `
 		select 
-			(select sum("sum") from "balance_operation" where "user_id" = $1 and "deleted_at" is null and status = 'PROCESSED') as current,
-			(select sum("sum") from "balance_operation" where "user_id" = $1 and "deleted_at" is null and type = 'WITHDRAW' and status = 'PROCESSED') as withdrawn
+			(select sum("sum") from "balance_operation" where "user_id" = $1 and "deleted_at" is null and status = 'PROCESSED') as "current",
+			(select sum("sum") from "balance_operation" where "user_id" = $1 and "deleted_at" is null and type = 'WITHDRAW' and status = 'PROCESSED') as "withdrawn"
 	`
 	row := r.pool.QueryRow(ctx, query, userID)
 	var current int
