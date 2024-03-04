@@ -7,7 +7,6 @@ import (
 	"gophermart/internal/app/controller/http/middleware"
 	"gophermart/internal/app/infrastructure/repository"
 	"gophermart/internal/app/usecase"
-	"gophermart/internal/app/usecase/job"
 	"net/http"
 
 	"github.com/go-chi/chi"
@@ -74,10 +73,10 @@ func Start(cxt context.Context, config *config.Config) error {
 	balanceOperationhandler := handlers.NewBalanceOperationHandler(config, balanceOperationService, userService)
 	securityMiddleware := middleware.NewSecurityMiddleware(userService)
 
-	balanceOperationJob := job.NewBalanceOperationJob(config, balanceOperationRepo)
+	// balanceOperationJob := job.NewBalanceOperationJob(config, balanceOperationRepo)
 
-	go balanceOperationJob.ConsumeOrder(cxt)
-	go balanceOperationJob.ProduceOrder(cxt)
+	// go balanceOperationJob.ConsumeOrder(cxt)
+	// go balanceOperationJob.ProduceOrder(cxt)
 
 	rMain := chi.NewRouter()
 	rBalanceOperation := chi.NewRouter()
