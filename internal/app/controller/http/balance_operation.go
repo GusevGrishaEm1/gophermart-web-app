@@ -178,7 +178,7 @@ func (*BalanceOperationHandler) validateErrorAfter(err error, w http.ResponseWri
 	if err != nil {
 		customErr := &customerr.CustomError{}
 		if errors.As(err, &customErr) {
-			w.WriteHeader(customErr.HttpStatus)
+			w.WriteHeader(customErr.HTTPStatus)
 			return true
 		}
 		w.WriteHeader(http.StatusInternalServerError)

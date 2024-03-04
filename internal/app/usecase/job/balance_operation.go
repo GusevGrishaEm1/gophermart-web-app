@@ -9,7 +9,7 @@ import (
 	"time"
 )
 
-const SIZE_ARRAY_TO_UPDATE int = 1000
+const MaxArraySize int = 1000
 
 type BalanceOperationJob struct {
 	chToUpdateAccrual chan *entity.BalanceOperation
@@ -65,7 +65,7 @@ loop:
 			el.Sum = int(response.Accrual * 100)
 			el.Status = entity.ProcessStatus(response.Status)
 			arrayToUpdate = append(arrayToUpdate, el)
-			if len(arrayToUpdate) > SIZE_ARRAY_TO_UPDATE {
+			if len(arrayToUpdate) > MaxArraySize {
 				j.UpdateOrders(ctx, arrayToUpdate)
 				arrayToUpdate = arrayToUpdate[:]
 			}

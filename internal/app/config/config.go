@@ -28,7 +28,7 @@ func (c *Config) setDefault() {
 		c.RunAddress = "localhost:8080"
 	}
 	if c.DatabaseURI == "" {
-		c.DatabaseURI = "postgresql://user:user@localhost:5432/gophermart?sslmode=disable"
+		c.DatabaseURI = "postgresql://user:user@localhost:5432/gophermart"
 	}
 	if c.AcrualSystemAddress == "" {
 		c.AcrualSystemAddress = "localhost:8081"
@@ -52,7 +52,7 @@ func (c *Config) setByFlags() {
 	flag.StringVar(&runAddress, "a", "localhost:8080", "run address")
 	c.RunAddress = runAddress
 	var databaseURI string
-	flag.StringVar(&databaseURI, "d", "postgresql://user:user@localhost:5432/gophermart?sslmode=disable", "database URI")
+	flag.StringVar(&databaseURI, "d", "postgresql://user:user@localhost:5432/gophermart", "database URI")
 	c.DatabaseURI = databaseURI
 	var acrualSystemAddress string
 	flag.StringVar(&acrualSystemAddress, "r", "localhost:8081", "accrual system address")

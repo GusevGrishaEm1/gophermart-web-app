@@ -2,7 +2,7 @@ package error
 
 type CustomError struct {
 	Err        error
-	HttpStatus int
+	HTTPStatus int
 }
 
 func (err *CustomError) Error() string {
@@ -12,7 +12,7 @@ func (err *CustomError) Error() string {
 func NewError(err error, status int) *CustomError {
 	return &CustomError{
 		Err:        err,
-		HttpStatus: status,
+		HTTPStatus: status,
 	}
 }
 

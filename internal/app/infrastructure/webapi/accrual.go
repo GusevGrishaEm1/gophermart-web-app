@@ -25,6 +25,7 @@ func (webAPI *AccrualWebAPI) GetAccrualRequest(order string) (*entity.AccrualRes
 	if err != nil {
 		return nil, err
 	}
+	defer res.Body.Close()
 	if res.StatusCode == http.StatusNoContent {
 		return nil, errors.New("no content")
 	} else if res.StatusCode == http.StatusInternalServerError {
