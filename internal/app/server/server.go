@@ -2,6 +2,7 @@ package server
 
 import (
 	"context"
+	"database/sql"
 	"gophermart/internal/app/config"
 	handlers "gophermart/internal/app/controller/http"
 	"gophermart/internal/app/controller/http/middleware"
@@ -11,6 +12,8 @@ import (
 	"net/http"
 
 	"github.com/go-chi/chi"
+	"github.com/mattes/migrate"
+	"github.com/mattes/migrate/database/postgres"
 )
 
 // `POST /api/user/register` — регистрация пользователя;
@@ -47,6 +50,10 @@ type CompressionMiddleware interface {
 }
 
 func Start(cxt context.Context, config *config.Config) error {
+	err := runMigrate(config)
+	if err != nil {
+		return err
+	}
 	userRepo, err := repository.NewUserRepository(cxt, config)
 	if err != nil {
 		return err
@@ -80,5 +87,27 @@ func Start(cxt context.Context, config *config.Config) error {
 	rMain.Mount("/", rBalanceOperation)
 
 	err = http.ListenAndServe(config.RunAddress, rMain)
+	return err
+}
+
+func runMigrate(config *config.Config) error {
+	db, err := sql.Open("postgres", config.DatabaseURI)
+	if err != nil {
+		panic(err)
+	}
+	driver, err := postgres.WithInstance(db, &postgres.Config{})
+	if err != nil {
+		panic(err)
+	}
+	m, err := migrate.NewWithDatabaseInstance(
+		"file://../../migrations",
+		"postgres", driver)
+	if err != nil {
+		panic(err)
+	}
+	err = m.Up()
+	if err != nil {
+		panic(err)
+	}
 	return err
 }
