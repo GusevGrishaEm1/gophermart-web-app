@@ -2,7 +2,7 @@ package middleware
 
 import (
 	"context"
-	"gophermart/cmd/gophermart/internal/app/usecase"
+	"gophermart/internal/app/usecase"
 	"net/http"
 )
 
