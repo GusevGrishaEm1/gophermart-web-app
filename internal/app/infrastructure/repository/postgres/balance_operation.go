@@ -95,9 +95,7 @@ func (r *BalanceOperationRepository) FindWithdrawsByUser(ctx context.Context, us
 }
 
 func (r *BalanceOperationRepository) SaveWithdraw(ctx context.Context, balanceOperation *entity.BalanceOperation) error {
-	tx, err := r.pool.BeginTx(ctx, pgx.TxOptions{
-		IsoLevel: pgx.RepeatableRead,
-	})
+	tx, err := r.pool.Begin(ctx)
 	if err != nil {
 		return err
 	}
