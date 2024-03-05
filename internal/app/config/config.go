@@ -37,13 +37,13 @@ func (c *Config) setByEnvs() {
 
 func (c *Config) setByFlags() {
 	var runAddress string
-	flag.StringVar(&runAddress, "a", "localhost:8080", "run address")
+	flag.StringVar(&runAddress, "a", "localhost:8081", "run address")
 	c.RunAddress = runAddress
 	var databaseURI string
 	flag.StringVar(&databaseURI, "d", "postgresql://user:user@localhost:5432/gophermart", "database URI")
 	c.DatabaseURI = databaseURI
 	var acrualSystemAddress string
-	flag.StringVar(&acrualSystemAddress, "r", "localhost:8081", "accrual system address")
+	flag.StringVar(&acrualSystemAddress, "r", "http://localhost:8080", "accrual system address")
 	c.AcrualSystemAddress = acrualSystemAddress
 	var isMigrate bool
 	flag.BoolVar(&isMigrate, "m", false, "is migrate")
