@@ -61,10 +61,11 @@ loop:
 		case el := <-j.chToUpdateAccrual:
 			response, err := j.GetAccrualRequest(el.Order)
 			if err != nil {
-				continue
+				el.Status = entity.ProcessStatus("NEW")
+			} else {
+				el.Sum = int(response.Accrual * 100)
+				el.Status = entity.ProcessStatus(response.Status)
 			}
-			el.Sum = int(response.Accrual * 100)
-			el.Status = entity.ProcessStatus(response.Status)
 			arrayToUpdate = append(arrayToUpdate, el)
 			if len(arrayToUpdate) > MaxArraySize {
 				j.UpdateOrders(ctx, arrayToUpdate)
