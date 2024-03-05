@@ -24,14 +24,14 @@ func New() *Config {
 }
 
 func (c *Config) setByEnvs() {
-	if c.RunAddress == "" {
-		c.RunAddress = os.Getenv("RUN_ADDRESS")
+	if val := os.Getenv("RUN_ADDRESS"); val != "" {
+		c.RunAddress = val
 	}
-	if c.DatabaseURI == "" {
-		c.DatabaseURI = os.Getenv("DATABASE_URI")
+	if val := os.Getenv("DATABASE_URI"); val != "" {
+		c.DatabaseURI = val
 	}
-	if c.AcrualSystemAddress == "" {
-		c.AcrualSystemAddress = os.Getenv("ACCRUAL_SYSTEM_ADDRESS")
+	if val := os.Getenv("ACCRUAL_SYSTEM_ADDRESS"); val != "" {
+		c.AcrualSystemAddress = val
 	}
 }
 
