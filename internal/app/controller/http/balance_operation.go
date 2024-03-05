@@ -88,7 +88,7 @@ func (h *BalanceOperationHandler) GetOrdersHandler(w http.ResponseWriter, r *htt
 		return
 	}
 	w.WriteHeader(http.StatusOK)
-	w.Header().Add("Content-Type", "application/json")
+	w.Header().Set("Content-Type", "application/json")
 	w.Write(data)
 }
 
@@ -114,7 +114,7 @@ func (h *BalanceOperationHandler) GetBalanceHandler(w http.ResponseWriter, r *ht
 		return
 	}
 	w.WriteHeader(http.StatusOK)
-	w.Header().Add("Content-Type", "application/json")
+	w.Header().Set("Content-Type", "application/json")
 	w.Write(data)
 }
 
@@ -171,7 +171,7 @@ func (h *BalanceOperationHandler) GetWithdrawalsHandler(w http.ResponseWriter, r
 		return
 	}
 	w.WriteHeader(http.StatusOK)
-	w.Header().Add("Content-Type", "application/json")
+	w.Header().Set("Content-Type", "application/json")
 	w.Write(data)
 }
 
