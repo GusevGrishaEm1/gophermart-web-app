@@ -44,5 +44,8 @@ func (webAPI *AccrualWebAPI) GetAccrualRequest(order string) (*entity.AccrualRes
 	if response.Status == "REGISTERED" {
 		return nil, errors.New("REGISTERED status")
 	}
+	if response.Status == "PROCESSING" {
+		return nil, errors.New("PROCESSING status")
+	}
 	return response, nil
 }
