@@ -3,7 +3,6 @@ package postgres
 import (
 	"context"
 	"errors"
-	"log"
 	"net/http"
 
 	"github.com/GusevGrishaEm1/gophermart-web-app.git/internal/app/config"
@@ -100,14 +99,17 @@ func (r *BalanceOperationRepository) SaveWithdraw(ctx context.Context, balanceOp
 	if err != nil {
 		return err
 	}
-	current, _, err := r.GetBalanceByUser(ctx, balanceOperation.ID)
+	query := `
+	select 
+		coalesce((select sum("sum") from "balance_operation" where "user_id" = $1 and "deleted_at" is null and status = 'PROCESSED'), 0) as "current"
+	`
+	row := tx.QueryRow(ctx, query, balanceOperation.UserID)
+	var current int
+	err = row.Scan(&current)
 	if err != nil {
 		return customerr.NewError(err, http.StatusInternalServerError)
 	}
 	if balanceOperation.Sum*(-1) > current {
-		log.Print("sum")
-		log.Print(balanceOperation.Sum * (-1))
-		log.Print(current)
 		return customerr.NewError(errors.New("current balance < withdraw"), http.StatusPaymentRequired)
 	}
 	shouldReturn, err := r.saveWithTx(ctx, tx, balanceOperation)
@@ -173,7 +175,7 @@ func (r *BalanceOperationRepository) UpdateOrders(ctx context.Context, balanceOp
 		update "balance_operation"
 		set 
 			status = $2,
-			sum = sum - $3
+			sum = $3
 		where id = $1
 	`
 	batch := &pgx.Batch{}
