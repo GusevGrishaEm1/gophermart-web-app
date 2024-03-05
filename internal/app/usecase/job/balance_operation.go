@@ -2,7 +2,6 @@ package job
 
 import (
 	"context"
-	"log"
 	"time"
 
 	"github.com/GusevGrishaEm1/gophermart-web-app.git/internal/app/config"
@@ -49,7 +48,7 @@ loop:
 
 func (j *BalanceOperationJob) ConsumeOrder(ctx context.Context) {
 	arrayToUpdate := make([]*entity.BalanceOperation, 0)
-	ticker := time.NewTicker(5000 * time.Millisecond)
+	ticker := time.NewTicker(1000 * time.Millisecond)
 	defer func() {
 		if len(arrayToUpdate) > 0 {
 			j.UpdateOrders(ctx, arrayToUpdate)
@@ -61,13 +60,9 @@ loop:
 		select {
 		case el := <-j.chToUpdateAccrual:
 			response, err := j.GetAccrualRequest(el.Order)
-			log.Print("hi")
 			if err != nil {
 				el.Status = entity.ProcessStatus("NEW")
 			} else {
-				log.Print(response.Order)
-				log.Print(response.Status)
-				log.Print(response.Accrual)
 				el.Sum = int(response.Accrual * 100)
 				el.Status = entity.ProcessStatus(response.Status)
 			}

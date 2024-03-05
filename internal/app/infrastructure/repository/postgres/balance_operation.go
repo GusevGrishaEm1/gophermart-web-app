@@ -74,7 +74,7 @@ func (r *BalanceOperationRepository) GetBalanceByUser(ctx context.Context, userI
 
 func (r *BalanceOperationRepository) FindWithdrawsByUser(ctx context.Context, userID int) ([]*entity.BalanceOperation, error) {
 	query := `
-		select "order", "sum", "created_at" from "balance_operation" where "user_id" = $1 and "deleted_at" is null and type = 'WITHDRAW' and status = 'PROCESSED'
+		select "id", "order", "sum", "created_at" from "balance_operation" where "user_id" = $1 and "deleted_at" is null and type = 'WITHDRAW' and status = 'PROCESSED'
 	`
 	rows, err := r.pool.Query(ctx, query, userID)
 	if err != nil {
