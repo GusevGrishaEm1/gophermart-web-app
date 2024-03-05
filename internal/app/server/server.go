@@ -2,12 +2,13 @@ package server
 
 import (
 	"context"
-	"gophermart/internal/app/config"
-	handlers "gophermart/internal/app/controller/http"
-	"gophermart/internal/app/controller/http/middleware"
-	"gophermart/internal/app/infrastructure/repository"
-	"gophermart/internal/app/usecase"
 	"net/http"
+
+	"github.com/GusevGrishaEm1/gophermart-web-app.git/internal/app/config"
+	handlers "github.com/GusevGrishaEm1/gophermart-web-app.git/internal/app/controller/http"
+	"github.com/GusevGrishaEm1/gophermart-web-app.git/internal/app/controller/http/middleware"
+	"github.com/GusevGrishaEm1/gophermart-web-app.git/internal/app/infrastructure/repository"
+	"github.com/GusevGrishaEm1/gophermart-web-app.git/internal/app/usecase"
 
 	"github.com/go-chi/chi"
 )

@@ -2,11 +2,12 @@ package job
 
 import (
 	"context"
-	"gophermart/internal/app/config"
-	"gophermart/internal/app/entity"
-	"gophermart/internal/app/infrastructure/repository"
-	"gophermart/internal/app/infrastructure/webapi"
 	"time"
+
+	"github.com/GusevGrishaEm1/gophermart-web-app.git/internal/app/config"
+	"github.com/GusevGrishaEm1/gophermart-web-app.git/internal/app/entity"
+	"github.com/GusevGrishaEm1/gophermart-web-app.git/internal/app/infrastructure/repository"
+	"github.com/GusevGrishaEm1/gophermart-web-app.git/internal/app/infrastructure/webapi"
 )
 
 const MaxArraySize int = 1000

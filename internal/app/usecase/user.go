@@ -3,13 +3,14 @@ package usecase
 import (
 	"context"
 	"errors"
-	"gophermart/internal/app/config"
-	"gophermart/internal/app/controller/http"
-	"gophermart/internal/app/entity"
-	customerr "gophermart/internal/app/error"
-	"gophermart/internal/app/infrastructure/repository"
 	nethttp "net/http"
 	"time"
+
+	"github.com/GusevGrishaEm1/gophermart-web-app.git/internal/app/config"
+	"github.com/GusevGrishaEm1/gophermart-web-app.git/internal/app/controller/http"
+	"github.com/GusevGrishaEm1/gophermart-web-app.git/internal/app/entity"
+	customerr "github.com/GusevGrishaEm1/gophermart-web-app.git/internal/app/error"
+	"github.com/GusevGrishaEm1/gophermart-web-app.git/internal/app/infrastructure/repository"
 
 	"github.com/golang-jwt/jwt/v4"
 	"golang.org/x/crypto/bcrypt"

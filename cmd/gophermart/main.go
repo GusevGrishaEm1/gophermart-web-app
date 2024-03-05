@@ -2,8 +2,9 @@ package main
 
 import (
 	"context"
-	"gophermart/internal/app/config"
-	"gophermart/internal/app/server"
+
+	"github.com/GusevGrishaEm1/gophermart-web-app.git/internal/app/config"
+	"github.com/GusevGrishaEm1/gophermart-web-app.git/internal/app/server"
 
 	_ "github.com/golang-migrate/migrate/v4/source/file"
 	_ "github.com/lib/pq"

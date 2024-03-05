@@ -3,10 +3,11 @@ package webapi
 import (
 	"encoding/json"
 	"errors"
-	"gophermart/internal/app/config"
-	"gophermart/internal/app/entity"
 	"io"
 	"net/http"
+
+	"github.com/GusevGrishaEm1/gophermart-web-app.git/internal/app/config"
+	"github.com/GusevGrishaEm1/gophermart-web-app.git/internal/app/entity"
 
 	"github.com/hashicorp/go-retryablehttp"
 )

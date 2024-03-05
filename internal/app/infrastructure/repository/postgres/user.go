@@ -3,10 +3,12 @@ package postgres
 import (
 	"context"
 	"errors"
-	"gophermart/internal/app/config"
-	"gophermart/internal/app/entity"
-	customerr "gophermart/internal/app/error"
 	"net/http"
+
+	customerr "github.com/GusevGrishaEm1/gophermart-web-app.git/internal/app/error"
+
+	"github.com/GusevGrishaEm1/gophermart-web-app.git/internal/app/config"
+	"github.com/GusevGrishaEm1/gophermart-web-app.git/internal/app/entity"
 
 	"github.com/jackc/pgx/v5/pgxpool"
 )

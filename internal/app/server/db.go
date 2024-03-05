@@ -2,7 +2,8 @@ package server
 
 import (
 	"context"
-	"gophermart/internal/app/config"
+
+	"github.com/GusevGrishaEm1/gophermart-web-app.git/internal/app/config"
 
 	"github.com/jackc/pgx/v5/pgxpool"
 )

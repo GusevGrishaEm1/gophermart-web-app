@@ -2,9 +2,10 @@ package repository
 
 import (
 	"context"
-	"gophermart/internal/app/config"
-	"gophermart/internal/app/entity"
-	"gophermart/internal/app/infrastructure/repository/postgres"
+
+	"github.com/GusevGrishaEm1/gophermart-web-app.git/internal/app/config"
+	"github.com/GusevGrishaEm1/gophermart-web-app.git/internal/app/entity"
+	"github.com/GusevGrishaEm1/gophermart-web-app.git/internal/app/infrastructure/repository/postgres"
 
 	"github.com/jackc/pgx/v5/pgxpool"
 )

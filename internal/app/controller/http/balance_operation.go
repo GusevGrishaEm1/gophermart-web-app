@@ -4,10 +4,11 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
-	"gophermart/internal/app/config"
-	customerr "gophermart/internal/app/error"
 	"io"
 	"net/http"
+
+	"github.com/GusevGrishaEm1/gophermart-web-app.git/internal/app/config"
+	customerr "github.com/GusevGrishaEm1/gophermart-web-app.git/internal/app/error"
 )
 
 // `POST /api/user/orders` — загрузка пользователем номера заказа для расчёта;

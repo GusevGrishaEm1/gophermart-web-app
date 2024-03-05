@@ -1,4 +1,4 @@
-module gophermart
+module github.com/GusevGrishaEm1/gophermart-web-app.git
 
 go 1.21.5
 

@@ -2,8 +2,9 @@ package middleware
 
 import (
 	"context"
-	"gophermart/internal/app/usecase"
 	"net/http"
+
+	"github.com/GusevGrishaEm1/gophermart-web-app.git/internal/app/usecase"
 )
 
 type UserService interface {
