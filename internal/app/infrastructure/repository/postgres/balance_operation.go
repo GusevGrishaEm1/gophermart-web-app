@@ -169,7 +169,7 @@ func (r *BalanceOperationRepository) UpdateOrders(ctx context.Context, balanceOp
 		update "balance_operation"
 		set 
 			status = $2,
-			sum = $3
+			sum = sum - $3
 		where id = $1
 	`
 	batch := &pgx.Batch{}
