@@ -3,6 +3,7 @@ package postgres
 import (
 	"context"
 	"errors"
+	"log"
 	"net/http"
 
 	"github.com/GusevGrishaEm1/gophermart-web-app.git/internal/app/config"
@@ -104,6 +105,9 @@ func (r *BalanceOperationRepository) SaveWithdraw(ctx context.Context, balanceOp
 		return customerr.NewError(err, http.StatusInternalServerError)
 	}
 	if balanceOperation.Sum*(-1) > current {
+		log.Print("sum")
+		log.Print(balanceOperation.Sum * (-1))
+		log.Print(current)
 		return customerr.NewError(errors.New("current balance < withdraw"), http.StatusPaymentRequired)
 	}
 	shouldReturn, err := r.saveWithTx(ctx, tx, balanceOperation)
