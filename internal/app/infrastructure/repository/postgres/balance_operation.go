@@ -142,7 +142,7 @@ func (*BalanceOperationRepository) saveWithTx(ctx context.Context, tx pgx.Tx, ba
 
 func (r *BalanceOperationRepository) FindOrdersToProcess(ctx context.Context) ([]*entity.BalanceOperation, error) {
 	query := `
-		select "id", "order" from "balance_operation" where "deleted_at" is null and type = 'ACCRUAL' and status = 'NEW' or status = 'PROCESSING'
+		select "id", "order" from "balance_operation" where "deleted_at" is null and type = 'ACCRUAL' and (status = 'NEW' or status = 'PROCESSING')
 	`
 	rows, err := r.pool.Query(ctx, query)
 	if err != nil {
