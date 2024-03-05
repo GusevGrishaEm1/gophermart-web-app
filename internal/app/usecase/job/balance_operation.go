@@ -29,7 +29,7 @@ func NewBalanceOperationJob(config *config.Config, r repository.BalanceOperation
 
 func (j *BalanceOperationJob) ProduceOrder(ctx context.Context) {
 	defer close(j.chToUpdateAccrual)
-	ticker := time.NewTicker(5000 * time.Millisecond)
+	ticker := time.NewTicker(1000 * time.Millisecond)
 loop:
 	for {
 		select {
