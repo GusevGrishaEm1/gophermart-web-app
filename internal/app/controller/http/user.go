@@ -52,6 +52,7 @@ func (userHandler *UserHandler) RegisterHandler(w http.ResponseWriter, r *http.R
 		Name:  string("USER_ID"),
 		Value: token,
 	}
+	w.Header().Add("Content-Type", "application/json")
 	http.SetCookie(w, cookie)
 	w.WriteHeader(http.StatusOK)
 }
