@@ -28,7 +28,7 @@ func NewBalanceOperationJob(config *config.Config, r repository.BalanceOperation
 
 func (j *BalanceOperationJob) ProduceOrder(ctx context.Context) {
 	defer close(j.chToUpdateAccrual)
-	ticker := time.NewTicker(1000 * time.Millisecond)
+	ticker := time.NewTicker(500 * time.Millisecond)
 loop:
 	for {
 		select {
@@ -48,7 +48,7 @@ loop:
 
 func (j *BalanceOperationJob) ConsumeOrder(ctx context.Context) {
 	arrayToUpdate := make([]*entity.BalanceOperation, 0)
-	ticker := time.NewTicker(1000 * time.Millisecond)
+	ticker := time.NewTicker(500 * time.Millisecond)
 	defer func() {
 		if len(arrayToUpdate) > 0 {
 			j.UpdateOrders(ctx, arrayToUpdate)
