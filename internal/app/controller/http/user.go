@@ -12,7 +12,7 @@ import (
 )
 
 type UserService interface {
-	RegisterUser(context.Context, *RegisterRequest) error
+	RegisterUser(context.Context, *RegisterRequest) (string, error)
 	LoginUser(context.Context, *LoginRequest) (string, error)
 	GetUserIDFromContext(ctx context.Context) (int, error)
 }
@@ -43,11 +43,16 @@ func (userHandler *UserHandler) RegisterHandler(w http.ResponseWriter, r *http.R
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
-	err = userHandler.RegisterUser(r.Context(), &dto)
+	token, err := userHandler.RegisterUser(r.Context(), &dto)
 	shouldReturn := userHandler.validateErrorAfter(err, w)
 	if shouldReturn {
 		return
 	}
+	cookie := &http.Cookie{
+		Name:  string("USER_ID"),
+		Value: token,
+	}
+	http.SetCookie(w, cookie)
 	w.WriteHeader(http.StatusOK)
 }
 

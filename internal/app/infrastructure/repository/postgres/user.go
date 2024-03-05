@@ -21,11 +21,11 @@ func NewUserRepository(ctx context.Context, config *config.Config, pool *pgxpool
 	return &UserRepository{pool: pool}, nil
 }
 
-func (r *UserRepository) Save(ctx context.Context, user *entity.User) error {
+func (r *UserRepository) Save(ctx context.Context, user *entity.User) (int, error) {
 	tx, err := r.pool.Begin(ctx)
 	if err != nil {
 		tx.Rollback(ctx)
-		return customerr.NewError(
+		return 0, customerr.NewError(
 			err,
 			http.StatusInternalServerError,
 		)
@@ -39,26 +39,26 @@ func (r *UserRepository) Save(ctx context.Context, user *entity.User) error {
 	err = tx.QueryRow(ctx, query, user.Login, user.Password).Scan(&id)
 	if err != nil {
 		tx.Rollback(ctx)
-		return customerr.NewError(
+		return 0, customerr.NewError(
 			err,
 			http.StatusInternalServerError,
 		)
 	}
 	if id == 0 {
 		tx.Rollback(ctx)
-		return customerr.NewError(
+		return 0, customerr.NewError(
 			errors.New("login conflict"),
 			http.StatusConflict,
 		)
 	}
 	err = tx.Commit(ctx)
 	if err != nil {
-		return customerr.NewError(
+		return 0, customerr.NewError(
 			err,
 			http.StatusInternalServerError,
 		)
 	}
-	return nil
+	return id, nil
 }
 
 func (r *UserRepository) FindByLogin(ctx context.Context, login string) (*entity.User, error) {

@@ -29,16 +29,24 @@ func NewUserService(c *config.Config, r repository.UserRepository) *UserService 
 	return &UserService{c, r}
 }
 
-func (s *UserService) RegisterUser(ctx context.Context, dto *http.RegisterRequest) error {
+func (s *UserService) RegisterUser(ctx context.Context, dto *http.RegisterRequest) (string, error) {
 	hash, err := hashPassword(dto.Password)
 	if err != nil {
-		return err
+		return "", err
 	}
 	user := &entity.User{
 		Login:    dto.Login,
 		Password: hash,
 	}
-	return s.Save(ctx, user)
+	id, err := s.Save(ctx, user)
+	if err != nil {
+		return "", err
+	}
+	jwt, err := buildJWTString(id)
+	if err != nil {
+		return "", err
+	}
+	return jwt, nil
 }
 
 func hashPassword(password string) (string, error) {
