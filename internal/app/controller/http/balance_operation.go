@@ -11,12 +11,6 @@ import (
 	customerr "github.com/GusevGrishaEm1/gophermart-web-app.git/internal/app/error"
 )
 
-// `POST /api/user/orders` — загрузка пользователем номера заказа для расчёта;
-// `GET /api/user/orders` — получение списка загруженных пользователем номеров заказов, статусов их обработки и информации о начислениях;
-// `GET /api/user/balance` — получение текущего баланса счёта баллов лояльности пользователя;
-// `POST /api/user/balance/withdraw` — запрос на списание баллов с накопительного счёта в счёт оплаты нового заказа;
-// `GET /api/user/withdrawals` — получение информации о выводе средств с накопительного счёта пользователем.
-
 type BalanceOperationService interface {
 	CreateNewOrder(context.Context, *CreateOrderRequest) error
 	GetListOrders(ctx context.Context, userID int) ([]*OrderResponse, error)
