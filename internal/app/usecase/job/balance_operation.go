@@ -65,6 +65,8 @@ loop:
 			if err != nil {
 				el.Status = entity.ProcessStatus("NEW")
 			} else {
+				log.Print(el.Order)
+				log.Print(el.Status)
 				log.Print(el.Sum)
 				el.Sum = int(response.Accrual * 100)
 				el.Status = entity.ProcessStatus(response.Status)
