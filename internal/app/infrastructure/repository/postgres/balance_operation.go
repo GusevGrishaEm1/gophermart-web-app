@@ -58,8 +58,8 @@ func (r *BalanceOperationRepository) FindOrdersByUser(ctx context.Context, userI
 func (r *BalanceOperationRepository) GetBalanceByUser(ctx context.Context, userID int) (int, int, error) {
 	query := `
 		select 
-			(select sum("sum") from "balance_operation" where "user_id" = $1 and "deleted_at" is null and status = 'PROCESSED') as "current",
-			(select sum("sum") from "balance_operation" where "user_id" = $1 and "deleted_at" is null and type = 'WITHDRAW' and status = 'PROCESSED') as "withdrawn"
+			coalesce((select sum("sum") from "balance_operation" where "user_id" = $1 and "deleted_at" is null and status = 'PROCESSED'), 0) as "current",
+			coalesce((select sum("sum") from "balance_operation" where "user_id" = $1 and "deleted_at" is null and type = 'WITHDRAW' and status = 'PROCESSED'), 0) as "withdrawn"
 	`
 	row := r.pool.QueryRow(ctx, query, userID)
 	var current int
@@ -104,7 +104,7 @@ func (r *BalanceOperationRepository) SaveWithdraw(ctx context.Context, balanceOp
 	if err != nil {
 		return customerr.NewError(err, http.StatusInternalServerError)
 	}
-	if balanceOperation.Sum > current {
+	if balanceOperation.Sum*(-1) > current {
 		return customerr.NewError(errors.New("current balance < withdraw"), http.StatusPaymentRequired)
 	}
 	shouldReturn, err := r.saveWithTx(ctx, tx, balanceOperation)

@@ -9,7 +9,7 @@ import (
 
 func InitTables(ctx context.Context, pool *pgxpool.Pool) error {
 	query := `
-		create table "user" (
+		create table if not exists "user" (
 			"id" serial not null,
 			"login" varchar(255) not null,
 			"password" varchar(255) not null,
@@ -18,7 +18,7 @@ func InitTables(ctx context.Context, pool *pgxpool.Pool) error {
 			constraint "user_pk" primary key ("id")
 		);
 		
-		create table "balance_operation" (
+		create table if not exists "balance_operation" (
 			"id" serial not null,
 			"sum" integer default 0,
 			"order" varchar(255) not null,

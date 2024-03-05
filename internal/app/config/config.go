@@ -18,23 +18,9 @@ type Config struct {
 
 func New() *Config {
 	config := &Config{}
-	config.setByEnvs()
 	config.setByFlags()
-	config.setDefault()
+	config.setByEnvs()
 	return config
-}
-
-func (c *Config) setDefault() {
-	if c.RunAddress == "" {
-		c.RunAddress = "localhost:8080"
-	}
-	if c.DatabaseURI == "" {
-		c.DatabaseURI = "postgresql://user:user@localhost:5432/gophermart"
-	}
-	if c.AcrualSystemAddress == "" {
-		c.AcrualSystemAddress = "localhost:8081"
-	}
-	c.IsMigrate = false
 }
 
 func (c *Config) setByEnvs() {

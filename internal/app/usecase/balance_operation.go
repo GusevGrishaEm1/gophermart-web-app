@@ -80,7 +80,7 @@ func (s *BalanceOperationService) GetBalance(ctx context.Context, userID int) (*
 	}
 	result := &http.BalanceResponse{
 		Current:   float32(current) / 100,
-		Withdrawn: float32(withdrawn) / 100 * (-1),
+		Withdrawn: float32(withdrawn) / 100,
 	}
 	return result, nil
 }
@@ -91,7 +91,7 @@ func (s *BalanceOperationService) CreateWithdraw(ctx context.Context, userID int
 	}
 	balanceOperation := &entity.BalanceOperation{
 		Order:  withdraw.Order,
-		Sum:    int(withdraw.Sum * 100),
+		Sum:    int(withdraw.Sum*100) * (-1),
 		UserID: userID,
 		Status: entity.PROCESSED,
 		Type:   entity.WITHDRAW,
