@@ -100,7 +100,7 @@ func (r *BalanceOperationRepository) SaveWithdraw(ctx context.Context, balanceOp
 		return err
 	}
 	query := `
-	select 
+	select
 		coalesce((select sum("sum") from "balance_operation" where "user_id" = $1 and "deleted_at" is null and status = 'PROCESSED'), 0) as "current"
 	`
 	row := tx.QueryRow(ctx, query, balanceOperation.UserID)

@@ -139,7 +139,7 @@ func (h *BalanceOperationHandler) WithdrawHandler(w http.ResponseWriter, r *http
 	if shouldReturn {
 		return
 	}
-	w.WriteHeader(http.StatusAccepted)
+	w.WriteHeader(http.StatusOK)
 }
 
 type WithdrawResponse struct {
