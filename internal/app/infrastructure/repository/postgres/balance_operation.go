@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"net/http"
+	"sync"
 
 	"github.com/GusevGrishaEm1/gophermart-web-app.git/internal/app/config"
 	"github.com/GusevGrishaEm1/gophermart-web-app.git/internal/app/entity"
@@ -14,7 +15,9 @@ import (
 )
 
 type BalanceOperationRepository struct {
-	pool *pgxpool.Pool
+	pool         *pgxpool.Pool
+	ordersByUser map[int]*sync.WaitGroup
+	m            sync.Mutex
 }
 
 func NewBalanceOperationRepository(ctx context.Context, config *config.Config, pool *pgxpool.Pool) (*BalanceOperationRepository, error) {
@@ -31,6 +34,14 @@ func (r *BalanceOperationRepository) SaveOrder(ctx context.Context, balanceOpera
 		return err
 	}
 	tx.Commit(ctx)
+	r.m.Lock()
+	_, ok := r.ordersByUser[balanceOperation.UserID]
+	if ok {
+		r.ordersByUser[balanceOperation.UserID].Add(1)
+	} else {
+		r.ordersByUser[balanceOperation.UserID] = &sync.WaitGroup{}
+	}
+	r.m.Unlock()
 	return nil
 }
 
@@ -57,6 +68,7 @@ func (r *BalanceOperationRepository) FindOrdersByUser(ctx context.Context, userI
 }
 
 func (r *BalanceOperationRepository) GetBalanceByUser(ctx context.Context, userID int) (int, int, error) {
+	r.ordersByUser[userID].Wait()
 	query := `
 		select 
 			coalesce((select sum("sum") from "balance_operation" where "user_id" = $1 and "deleted_at" is null and status = 'PROCESSED'), 0) as "current",
@@ -178,6 +190,11 @@ func (r *BalanceOperationRepository) UpdateOrders(ctx context.Context, balanceOp
 	}
 	results := r.pool.SendBatch(ctx, batch)
 	_, err := results.Exec()
+	r.m.Lock()
+	for _, balance := range balanceOperations {
+		r.ordersByUser[balance.UserID].Done()
+	}
+	r.m.Unlock()
 	if err != nil {
 		return err
 	}
