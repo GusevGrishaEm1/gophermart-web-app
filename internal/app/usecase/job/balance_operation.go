@@ -2,7 +2,6 @@ package job
 
 import (
 	"context"
-	"log"
 	"time"
 
 	"github.com/GusevGrishaEm1/gophermart-web-app.git/internal/app/config"
@@ -62,8 +61,7 @@ loop:
 		case el := <-j.chToUpdateAccrual:
 			response, err := j.GetAccrualRequest(el.Order)
 			if err != nil {
-				log.Print("job")
-				log.Print(response.Order, response.Status)
+				el.Sum = 0
 				el.Status = entity.ProcessStatus("NEW")
 			} else {
 				el.Sum = int(response.Accrual * 100)
