@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"io"
+	"log"
 	"net/http"
 
 	"github.com/GusevGrishaEm1/gophermart-web-app.git/internal/app/config"
@@ -38,6 +39,8 @@ func (webAPI *AccrualWebAPI) GetAccrualRequest(order string) (*entity.AccrualRes
 	}
 	var response *entity.AccrualResponse
 	err = json.Unmarshal(data, &response)
+	log.Print("request")
+	log.Print(response.Order, response.Status)
 	if err != nil {
 		return nil, err
 	}
