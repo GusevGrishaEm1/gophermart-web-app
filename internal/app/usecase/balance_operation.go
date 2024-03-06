@@ -82,7 +82,7 @@ func (s *BalanceOperationService) GetBalance(ctx context.Context, userID int) (*
 	}
 	result := &http.BalanceResponse{
 		Current:   float32(current) / 100,
-		Withdrawn: float32(withdrawn) / 100,
+		Withdrawn: float32(withdrawn) / 100 * (-1),
 	}
 	return result, nil
 }
