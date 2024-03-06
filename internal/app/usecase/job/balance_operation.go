@@ -63,7 +63,7 @@ loop:
 			response, err := j.GetAccrualRequest(el.Order)
 			if err != nil {
 				log.Print("job")
-				log.Print(response.Order, response.Status, response.Accrual)
+				log.Print(response.Order, response.Status)
 				el.Status = entity.ProcessStatus("NEW")
 			} else {
 				el.Sum = int(response.Accrual * 100)
