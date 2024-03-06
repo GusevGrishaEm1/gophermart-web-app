@@ -137,7 +137,7 @@ func (*BalanceOperationRepository) saveWithTx(ctx context.Context, tx pgx.Tx, ba
 		return true, customerr.NewError(err, http.StatusInternalServerError)
 	}
 	if userID != 0 {
-		if userID == balanceOperation.UserID && balanceOperation.Status == entity.ProcessStatus(entity.ACCRUAL) {
+		if userID == balanceOperation.UserID {
 			return true, customerr.NewError(errors.New("order is already saved"), http.StatusOK)
 		}
 		return true, customerr.NewError(errors.New("order is already saved for another user"), http.StatusConflict)
