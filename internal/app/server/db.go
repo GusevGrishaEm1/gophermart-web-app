@@ -32,7 +32,7 @@ func InitTables(ctx context.Context, pool *pgxpool.Pool) error {
 		);
 		
 		ALTER TABLE "balance_operation" ADD CONSTRAINT "balance_operation_fk" FOREIGN KEY ("user_id") REFERENCES "user"("id");
-		CREATE UNIQUE INDEX "order_idx" ON "balance_operation"("order") where "deleted_at" is null;
+		CREATE UNIQUE INDEX "order_idx" ON "balance_operation"("order") where "deleted_at" is null and "status" = 'ACCRUAL';
 		CREATE UNIQUE INDEX "login_idx" ON "user"("login") where "deleted_at" is null;
 	`
 	_, err := pool.Exec(ctx, query)
