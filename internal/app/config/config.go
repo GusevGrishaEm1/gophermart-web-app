@@ -1,8 +1,11 @@
 package config
 
 import (
+	"context"
 	"flag"
 	"os"
+
+	"github.com/jackc/pgx/v5/pgxpool"
 )
 
 // - адрес и порт запуска сервиса: переменная окружения ОС `RUN_ADDRESS` или флаг `-a`
@@ -14,13 +17,19 @@ type Config struct {
 	DatabaseURI         string
 	AcrualSystemAddress string
 	IsMigrate           bool
+	Pool                *pgxpool.Pool
 }
 
-func New() *Config {
+func New(ctx context.Context) (*Config, error) {
 	config := &Config{}
 	config.setByFlags()
 	config.setByEnvs()
-	return config
+	pool, err := pgxpool.New(ctx, config.DatabaseURI)
+	if err != nil {
+		return nil, err
+	}
+	config.Pool = pool
+	return config, nil
 }
 
 func (c *Config) setByEnvs() {

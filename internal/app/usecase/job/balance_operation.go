@@ -70,12 +70,12 @@ loop:
 			arrayToUpdate = append(arrayToUpdate, el)
 			if len(arrayToUpdate) > MaxArraySize {
 				j.UpdateOrders(ctx, arrayToUpdate)
-				arrayToUpdate = make([]*entity.BalanceOperation, 0)
+				arrayToUpdate = arrayToUpdate[:]
 			}
 		case <-ticker.C:
 			if len(arrayToUpdate) > 0 {
 				j.UpdateOrders(ctx, arrayToUpdate)
-				arrayToUpdate = make([]*entity.BalanceOperation, 0)
+				arrayToUpdate = arrayToUpdate[:]
 			}
 		case <-ctx.Done():
 			break loop

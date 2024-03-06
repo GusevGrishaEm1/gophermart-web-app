@@ -12,8 +12,11 @@ import (
 
 func main() {
 	ctx := context.Background()
-	config := config.New()
-	err := server.Start(ctx, config)
+	config, err := config.New(ctx)
+	if err != nil {
+		panic(err)
+	}
+	err = server.Start(ctx, config)
 	if err != nil {
 		panic(err)
 	}

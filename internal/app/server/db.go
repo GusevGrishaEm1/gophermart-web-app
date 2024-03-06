@@ -3,8 +3,6 @@ package server
 import (
 	"context"
 
-	"github.com/GusevGrishaEm1/gophermart-web-app.git/internal/app/config"
-
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
@@ -37,8 +35,4 @@ func InitTables(ctx context.Context, pool *pgxpool.Pool) error {
 	`
 	_, err := pool.Exec(ctx, query)
 	return err
-}
-
-func InitPool(ctx context.Context, config *config.Config) (*pgxpool.Pool, error) {
-	return pgxpool.New(ctx, config.DatabaseURI)
 }

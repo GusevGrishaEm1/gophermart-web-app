@@ -14,14 +14,6 @@ import (
 	"github.com/go-chi/chi"
 )
 
-// `POST /api/user/register` — регистрация пользователя;
-// `POST /api/user/login` — аутентификация пользователя;
-// `POST /api/user/orders` — загрузка пользователем номера заказа для расчёта;
-// `GET /api/user/orders` — получение списка загруженных пользователем номеров заказов, статусов их обработки и информации о начислениях;
-// `GET /api/user/balance` — получение текущего баланса счёта баллов лояльности пользователя;
-// `POST /api/user/balance/withdraw` — запрос на списание баллов с накопительного счёта в счёт оплаты нового заказа;
-// `GET /api/user/withdrawals` — получение информации о выводе средств с накопительного счёта пользователем.
-
 type BalanceOperationHandler interface {
 	CreateOrderHandler(w http.ResponseWriter, r *http.Request)
 	GetOrdersHandler(w http.ResponseWriter, r *http.Request)
@@ -48,26 +40,18 @@ type CompressionMiddleware interface {
 }
 
 func Start(cxt context.Context, config *config.Config) error {
-	pool, err := InitPool(cxt, config)
+	err := InitTables(cxt, config.Pool)
 	if err != nil {
 		return err
 	}
-	err = InitTables(cxt, pool)
-	if err != nil {
-		return err
-	}
-	// err := runMigrate(config)
-	// if err != nil {
-	// 	return err
-	// }
-	userRepo, err := repository.NewUserRepository(cxt, config, pool)
+	userRepo, err := repository.NewUserRepository(cxt, config)
 	if err != nil {
 		return err
 	}
 	userService := usecase.NewUserService(config, userRepo)
 	userHandler := handlers.NewUserHandler(config, userService)
 
-	balanceOperationRepo, err := repository.NewBalanceOperationRepository(cxt, config, pool)
+	balanceOperationRepo, err := repository.NewBalanceOperationRepository(cxt, config)
 	if err != nil {
 		return err
 	}
