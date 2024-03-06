@@ -57,6 +57,22 @@ func (r *BalanceOperationRepository) FindOrdersByUser(ctx context.Context, userI
 }
 
 func (r *BalanceOperationRepository) GetBalanceByUser(ctx context.Context, userID int) (int, int, error) {
+	var chk bool = true
+	for chk {
+		queryCheck := `
+			select
+				exists(
+				select * from "balance_operation"
+				where "user_id" = $1
+				and "deleted_at" is null
+				and status not in ('PROCESSED', 'INVALID')) as chk
+	`
+		row := r.pool.QueryRow(ctx, queryCheck, userID)
+		err := row.Scan(&chk)
+		if err != nil {
+			return 0, 0, err
+		}
+	}
 	query := `
 		select 
 			coalesce((select sum("sum") from "balance_operation" where "user_id" = $1 and "deleted_at" is null and status = 'PROCESSED'), 0) as "current",
