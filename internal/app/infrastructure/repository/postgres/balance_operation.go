@@ -3,6 +3,7 @@ package postgres
 import (
 	"context"
 	"errors"
+	"log"
 	"net/http"
 
 	"github.com/GusevGrishaEm1/gophermart-web-app.git/internal/app/config"
@@ -196,6 +197,8 @@ func (r *BalanceOperationRepository) UpdateOrders(ctx context.Context, balanceOp
 	`
 	batch := &pgx.Batch{}
 	for _, el := range balanceOperations {
+		log.Print("fff")
+		log.Print(el.ID, el.Status, el.Sum)
 		batch.Queue(query, el.ID, el.Status, el.Sum)
 	}
 	results := r.pool.SendBatch(ctx, batch)
