@@ -32,6 +32,7 @@ func (s *BalanceOperationService) CreateNewOrder(ctx context.Context, dto *http.
 		UserID: dto.UserID,
 		Status: entity.NEW,
 		Type:   entity.ACCRUAL,
+		Sum:    0,
 	}
 	return s.SaveOrder(ctx, balanceOperation)
 }

@@ -124,13 +124,13 @@ func (r *BalanceOperationRepository) SaveWithdraw(ctx context.Context, balanceOp
 func (*BalanceOperationRepository) saveWithTx(ctx context.Context, tx pgx.Tx, balanceOperation *entity.BalanceOperation) (bool, error) {
 	query := `
 		with ins as (
-			insert into "balance_operation" ("order", "status", "type", "user_id") values($1, $2, $3, $4) on conflict("order") where "deleted_at" is null and "type" = 'ACCRUAL' do nothing returning id
+			insert into "balance_operation" ("order", "status", "type", "user_id", "sum") values($1, $2, $3, $4) on conflict("order") where "deleted_at" is null and "type" = 'ACCRUAL' do nothing returning id
 		) select 
 			case when (select ins.id from ins) is null
 			then (select "user_id" from "balance_operation" where "order" = $1 and "deleted_at" is null)
 			else 0 end as userID
 	`
-	row := tx.QueryRow(ctx, query, balanceOperation.Order, string(balanceOperation.Status), string(balanceOperation.Type), balanceOperation.UserID)
+	row := tx.QueryRow(ctx, query, balanceOperation.Order, string(balanceOperation.Status), string(balanceOperation.Type), balanceOperation.UserID, balanceOperation.Sum)
 	var userID int
 	err := row.Scan(&userID)
 	if err != nil {
