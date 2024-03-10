@@ -12,14 +12,14 @@ import (
 )
 
 const (
-	DbName = "gophermart"
-	DbUser = "user"
-	DbPass = "user"
+	DBName = "gophermart"
+	DBUser = "user"
+	DBPass = "user"
 )
 
 type TestDatabase struct {
-	DbInstance *pgxpool.Pool
-	DbAddress  string
+	DBInstance *pgxpool.Pool
+	DBAddress  string
 	container  testcontainers.Container
 }
 
@@ -32,22 +32,22 @@ func SetupTestDatabase() *TestDatabase {
 	}
 	return &TestDatabase{
 		container:  container,
-		DbInstance: dbInstance,
-		DbAddress:  dbAddr,
+		DBInstance: dbInstance,
+		DBAddress:  dbAddr,
 	}
 }
 
 func (tdb *TestDatabase) TearDown() {
-	tdb.DbInstance.Close()
+	tdb.DBInstance.Close()
 	_ = tdb.container.Terminate(context.Background())
 }
 
 func createContainer(ctx context.Context) (testcontainers.Container, *pgxpool.Pool, string, error) {
 
 	var env = map[string]string{
-		"POSTGRES_PASSWORD": DbPass,
-		"POSTGRES_USER":     DbUser,
-		"POSTGRES_DB":       DbName,
+		"POSTGRES_PASSWORD": DBPass,
+		"POSTGRES_USER":     DBUser,
+		"POSTGRES_DB":       DBName,
 	}
 	var port = "5432/tcp"
 
@@ -75,7 +75,7 @@ func createContainer(ctx context.Context) (testcontainers.Container, *pgxpool.Po
 	time.Sleep(time.Second)
 
 	dbAddr := fmt.Sprintf("localhost:%s", p.Port())
-	db, err := pgxpool.New(ctx, fmt.Sprintf("postgres://%s:%s@%s/%s?sslmode=disable", DbUser, DbPass, dbAddr, DbName))
+	db, err := pgxpool.New(ctx, fmt.Sprintf("postgres://%s:%s@%s/%s?sslmode=disable", DBUser, DBPass, dbAddr, DBName))
 	if err != nil {
 		return container, db, dbAddr, fmt.Errorf("failed to establish database connection: %v", err)
 	}
