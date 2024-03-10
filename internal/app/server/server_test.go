@@ -183,6 +183,7 @@ func login(login string, password string, userHandler UserHandler) string {
 	w := httptest.NewRecorder()
 	userHandler.LoginHandler(w, request)
 	res := w.Result()
+	defer res.Body.Close()
 	if len(res.Cookies()) == 0 {
 		return ""
 	}
