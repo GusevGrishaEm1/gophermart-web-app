@@ -1,4 +1,3 @@
--- Active: 1709062377855@@127.0.0.1@5432@gophermart@public
 create table "user" (
 	"id" serial not null,
 	"login" varchar(255) not null,
@@ -7,7 +6,6 @@ create table "user" (
 	"deleted_at" timestamp,
 	constraint "user_pk" primary key ("id")
 );
-
 create table "balance_operation" (
 	"id" serial not null,
 	"sum" integer default 0,

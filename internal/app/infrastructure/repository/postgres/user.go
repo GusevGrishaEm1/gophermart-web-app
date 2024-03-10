@@ -75,3 +75,15 @@ func (r *UserRepository) FindByLogin(ctx context.Context, login string) (*entity
 	}
 	return user, nil
 }
+
+func (r *UserRepository) ExistsByID(ctx context.Context, ID int) bool {
+	query := `
+		select exists(select * from "user" where "id" = $1 and deleted_at is null) as res
+	`
+	var res bool
+	err := r.pool.QueryRow(ctx, query, ID).Scan(&res)
+	if err != nil {
+		return false
+	}
+	return res
+}

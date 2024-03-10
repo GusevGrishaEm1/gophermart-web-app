@@ -3,12 +3,10 @@ package http
 import (
 	"context"
 	"encoding/json"
-	"errors"
 	"io"
 	"net/http"
 
 	"github.com/GusevGrishaEm1/gophermart-web-app.git/internal/app/config"
-	customerr "github.com/GusevGrishaEm1/gophermart-web-app.git/internal/app/error"
 )
 
 type BalanceOperationService interface {
@@ -37,13 +35,13 @@ type CreateOrderRequest struct {
 func (h *BalanceOperationHandler) CreateOrderHandler(w http.ResponseWriter, r *http.Request) {
 	buf, err := io.ReadAll(io.Reader(r.Body))
 	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
+		sendClientErr(err, w)
 		return
 	}
 	order := string(buf)
 	userID, err := h.GetUserIDFromContext(r.Context())
 	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
+		sendServerErr(err, w)
 		return
 	}
 	dto := &CreateOrderRequest{
@@ -51,8 +49,8 @@ func (h *BalanceOperationHandler) CreateOrderHandler(w http.ResponseWriter, r *h
 		UserID: userID,
 	}
 	err = h.CreateNewOrder(r.Context(), dto)
-	shouldReturn := h.validateErrorAfter(err, w)
-	if shouldReturn {
+	if err != nil {
+		sendServerErr(err, w)
 		return
 	}
 	w.WriteHeader(http.StatusAccepted)
@@ -68,22 +66,15 @@ type OrderResponse struct {
 func (h *BalanceOperationHandler) GetOrdersHandler(w http.ResponseWriter, r *http.Request) {
 	userID, err := h.GetUserIDFromContext(r.Context())
 	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
+		sendServerErr(err, w)
 		return
 	}
 	responseArr, err := h.GetListOrders(r.Context(), userID)
-	shouldReturn := h.validateErrorAfter(err, w)
-	if shouldReturn {
-		return
-	}
-	data, err := json.Marshal(responseArr)
 	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
+		sendServerErr(err, w)
 		return
 	}
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
-	w.Write(data)
+	sendOKWithBody(w, responseArr)
 }
 
 type BalanceResponse struct {
@@ -94,22 +85,15 @@ type BalanceResponse struct {
 func (h *BalanceOperationHandler) GetBalanceHandler(w http.ResponseWriter, r *http.Request) {
 	userID, err := h.GetUserIDFromContext(r.Context())
 	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
+		sendServerErr(err, w)
 		return
 	}
-	response, err := h.GetBalance(r.Context(), userID)
-	shouldReturn := h.validateErrorAfter(err, w)
-	if shouldReturn {
-		return
-	}
-	data, err := json.Marshal(response)
+	balanceResponse, err := h.GetBalance(r.Context(), userID)
 	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
+		sendServerErr(err, w)
 		return
 	}
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
-	w.Write(data)
+	sendOKWithBody(w, balanceResponse)
 }
 
 type WithdrawRequest struct {
@@ -120,23 +104,23 @@ type WithdrawRequest struct {
 func (h *BalanceOperationHandler) WithdrawHandler(w http.ResponseWriter, r *http.Request) {
 	buf, err := io.ReadAll(io.Reader(r.Body))
 	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		return
-	}
-	userID, err := h.GetUserIDFromContext(r.Context())
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
+		sendClientErr(err, w)
 		return
 	}
 	var withdraw *WithdrawRequest
 	err = json.Unmarshal(buf, &withdraw)
 	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
+		sendClientErr(err, w)
+		return
+	}
+	userID, err := h.GetUserIDFromContext(r.Context())
+	if err != nil {
+		sendServerErr(err, w)
 		return
 	}
 	err = h.CreateWithdraw(r.Context(), userID, withdraw)
-	shouldReturn := h.validateErrorAfter(err, w)
-	if shouldReturn {
+	if err != nil {
+		sendServerErr(err, w)
 		return
 	}
 	w.WriteHeader(http.StatusOK)
@@ -151,33 +135,13 @@ type WithdrawResponse struct {
 func (h *BalanceOperationHandler) GetWithdrawalsHandler(w http.ResponseWriter, r *http.Request) {
 	userID, err := h.GetUserIDFromContext(r.Context())
 	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
+		sendServerErr(err, w)
 		return
 	}
 	responseArr, err := h.GetWithdrawals(r.Context(), userID)
-	shouldReturn := h.validateErrorAfter(err, w)
-	if shouldReturn {
+	if err != nil {
+		sendServerErr(err, w)
 		return
 	}
-	data, err := json.Marshal(responseArr)
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		return
-	}
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
-	w.Write(data)
-}
-
-func (*BalanceOperationHandler) validateErrorAfter(err error, w http.ResponseWriter) bool {
-	if err != nil {
-		customErr := &customerr.CustomError{}
-		if errors.As(err, &customErr) {
-			w.WriteHeader(customErr.HTTPStatus)
-			return true
-		}
-		w.WriteHeader(http.StatusInternalServerError)
-		return true
-	}
-	return false
+	sendOKWithBody(w, responseArr)
 }

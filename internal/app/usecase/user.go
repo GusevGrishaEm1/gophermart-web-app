@@ -115,3 +115,7 @@ func (s *UserService) GetUserIDFromContext(ctx context.Context) (int, error) {
 	}
 	return userID, nil
 }
+
+func (s *UserService) ExistsUser(ctx context.Context, userID int) bool {
+	return s.ExistsByID(ctx, userID)
+}

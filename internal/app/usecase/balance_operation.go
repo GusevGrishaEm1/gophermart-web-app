@@ -37,30 +37,10 @@ func (s *BalanceOperationService) CreateNewOrder(ctx context.Context, dto *http.
 	return s.SaveOrder(ctx, balanceOperation)
 }
 
-func checkLuhn(order string) bool {
-	sum := 0
-	len := len([]rune(order))
-	parity := len % 2
-	for i := 0; i < len; i++ {
-		num, err := strconv.Atoi(string(order[i]))
-		if err != nil {
-			return false
-		}
-		if i%2 == parity {
-			num *= 2
-			if num > 9 {
-				num -= 9
-			}
-		}
-		sum += num
-	}
-	return sum%10 == 0
-}
-
 func (s *BalanceOperationService) GetListOrders(ctx context.Context, userID int) ([]*http.OrderResponse, error) {
 	entityArr, err := s.FindOrdersByUser(ctx, userID)
 	if err != nil {
-		return nil, customerr.NewError(err, nethttp.StatusInternalServerError)
+		return nil, err
 	}
 	responseArr := make([]*http.OrderResponse, len(entityArr))
 	for i, entity := range entityArr {
@@ -101,10 +81,30 @@ func (s *BalanceOperationService) CreateWithdraw(ctx context.Context, userID int
 	return s.SaveWithdraw(ctx, balanceOperation)
 }
 
+func checkLuhn(order string) bool {
+	sum := 0
+	len := len([]rune(order))
+	parity := len % 2
+	for i := 0; i < len; i++ {
+		num, err := strconv.Atoi(string(order[i]))
+		if err != nil {
+			return false
+		}
+		if i%2 == parity {
+			num *= 2
+			if num > 9 {
+				num -= 9
+			}
+		}
+		sum += num
+	}
+	return sum%10 == 0
+}
+
 func (s *BalanceOperationService) GetWithdrawals(ctx context.Context, userID int) ([]*http.WithdrawResponse, error) {
 	entityArr, err := s.FindWithdrawsByUser(ctx, userID)
 	if err != nil {
-		return nil, customerr.NewError(err, nethttp.StatusInternalServerError)
+		return nil, err
 	}
 	responseArr := make([]*http.WithdrawResponse, len(entityArr))
 	for i, entity := range entityArr {

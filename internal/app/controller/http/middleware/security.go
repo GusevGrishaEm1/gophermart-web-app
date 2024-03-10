@@ -9,6 +9,7 @@ import (
 
 type UserService interface {
 	GetUserIDFromToken(token string) (int, error)
+	ExistsUser(ctx context.Context, userID int) bool
 }
 
 type SecurityMiddleware struct {
@@ -28,6 +29,10 @@ func (m *SecurityMiddleware) SecurityMiddleware(h http.Handler) http.Handler {
 		}
 		userID, err := m.GetUserIDFromToken(cookie.Value)
 		if err != nil || userID == 0 {
+			w.WriteHeader(http.StatusUnauthorized)
+			return
+		}
+		if !m.ExistsUser(r.Context(), userID) {
 			w.WriteHeader(http.StatusUnauthorized)
 			return
 		}

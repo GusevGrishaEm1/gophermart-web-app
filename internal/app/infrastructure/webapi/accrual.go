@@ -13,11 +13,15 @@ import (
 )
 
 type AccrualWebAPI struct {
-	Config *config.Config
+	c *config.Config
+}
+
+func NewAccrualWebAPI(config *config.Config) *AccrualWebAPI {
+	return &AccrualWebAPI{config}
 }
 
 func (webAPI *AccrualWebAPI) GetAccrualRequest(order string) (*entity.AccrualResponse, error) {
-	req, err := retryablehttp.NewRequest(http.MethodGet, webAPI.Config.AcrualSystemAddress+"/api/orders/"+order, nil)
+	req, err := retryablehttp.NewRequest(http.MethodGet, webAPI.c.AcrualSystemAddress+"/api/orders/"+order, nil)
 	if err != nil {
 		return nil, err
 	}

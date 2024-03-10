@@ -6,7 +6,7 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
-func InitTables(ctx context.Context, pool *pgxpool.Pool) error {
+func initTables(ctx context.Context, pool *pgxpool.Pool) error {
 	query := `
 		create table if not exists "user" (
 			"id" serial not null,
@@ -16,7 +16,6 @@ func InitTables(ctx context.Context, pool *pgxpool.Pool) error {
 			"deleted_at" timestamp,
 			constraint "user_pk" primary key ("id")
 		);
-		
 		create table if not exists "balance_operation" (
 			"id" serial not null,
 			"sum" integer default 0,
@@ -28,9 +27,8 @@ func InitTables(ctx context.Context, pool *pgxpool.Pool) error {
 			"deleted_at" timestamp,
 			constraint "balance_operation_pk" primary key ("id")
 		);
-		
 		ALTER TABLE "balance_operation" ADD CONSTRAINT "balance_operation_fk" FOREIGN KEY ("user_id") REFERENCES "user"("id");
-		CREATE UNIQUE INDEX "order_idx" ON "balance_operation"("order") where "deleted_at" is null and "type" = 'ACCRUAL';
+		CREATE UNIQUE INDEX "order_idx" ON "balance_operation"("order") where "deleted_at" is null;
 		CREATE UNIQUE INDEX "login_idx" ON "user"("login") where "deleted_at" is null;
 	`
 	_, err := pool.Exec(ctx, query)

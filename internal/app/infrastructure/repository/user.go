@@ -11,6 +11,7 @@ import (
 type UserRepository interface {
 	Save(ctx context.Context, user *entity.User) (int, error)
 	FindByLogin(ctx context.Context, login string) (*entity.User, error)
+	ExistsByID(ctx context.Context, ID int) bool
 }
 
 func NewUserRepository(ctx context.Context, config *config.Config) (UserRepository, error) {

@@ -7,21 +7,24 @@ import (
 	"github.com/GusevGrishaEm1/gophermart-web-app.git/internal/app/config"
 	"github.com/GusevGrishaEm1/gophermart-web-app.git/internal/app/entity"
 	"github.com/GusevGrishaEm1/gophermart-web-app.git/internal/app/infrastructure/repository"
-	"github.com/GusevGrishaEm1/gophermart-web-app.git/internal/app/infrastructure/webapi"
 )
 
 const MaxArraySize int = 1000
 
+type AccrualWebAPI interface {
+	GetAccrualRequest(order string) (*entity.AccrualResponse, error)
+}
+
 type BalanceOperationJob struct {
 	chToUpdateAccrual chan *entity.BalanceOperation
-	*webapi.AccrualWebAPI
+	AccrualWebAPI
 	repository.BalanceOperationRepository
 }
 
-func NewBalanceOperationJob(config *config.Config, r repository.BalanceOperationRepository) *BalanceOperationJob {
+func NewBalanceOperationJob(config *config.Config, r repository.BalanceOperationRepository, webAPI AccrualWebAPI) *BalanceOperationJob {
 	return &BalanceOperationJob{
 		make(chan *entity.BalanceOperation, 1024),
-		&webapi.AccrualWebAPI{Config: config},
+		webAPI,
 		r,
 	}
 }

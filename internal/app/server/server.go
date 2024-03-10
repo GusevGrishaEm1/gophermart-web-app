@@ -8,6 +8,7 @@ import (
 	handlers "github.com/GusevGrishaEm1/gophermart-web-app.git/internal/app/controller/http"
 	"github.com/GusevGrishaEm1/gophermart-web-app.git/internal/app/controller/http/middleware"
 	"github.com/GusevGrishaEm1/gophermart-web-app.git/internal/app/infrastructure/repository"
+	"github.com/GusevGrishaEm1/gophermart-web-app.git/internal/app/infrastructure/webapi"
 	"github.com/GusevGrishaEm1/gophermart-web-app.git/internal/app/usecase"
 	"github.com/GusevGrishaEm1/gophermart-web-app.git/internal/app/usecase/job"
 
@@ -40,10 +41,11 @@ type CompressionMiddleware interface {
 }
 
 func Start(cxt context.Context, config *config.Config) error {
-	err := InitTables(cxt, config.Pool)
+	err := initTables(cxt, config.Pool)
 	if err != nil {
 		return err
 	}
+
 	userRepo, err := repository.NewUserRepository(cxt, config)
 	if err != nil {
 		return err
@@ -59,45 +61,31 @@ func Start(cxt context.Context, config *config.Config) error {
 	balanceOperationhandler := handlers.NewBalanceOperationHandler(config, balanceOperationService, userService)
 	securityMiddleware := middleware.NewSecurityMiddleware(userService)
 
-	balanceOperationJob := job.NewBalanceOperationJob(config, balanceOperationRepo)
+	runJobs(cxt, config, balanceOperationRepo)
 
-	go balanceOperationJob.ConsumeOrder(cxt)
-	go balanceOperationJob.ProduceOrder(cxt)
+	r := getRouter(userHandler, securityMiddleware, balanceOperationhandler)
 
-	rMain := chi.NewRouter()
-	rMain.Post("/api/user/register", userHandler.RegisterHandler)
-	rMain.Post("/api/user/login", userHandler.LoginHandler)
-	rBalanceOperation := chi.NewRouter()
-	rBalanceOperation.Use(securityMiddleware.SecurityMiddleware)
-	rBalanceOperation.Get("/api/user/orders", balanceOperationhandler.GetOrdersHandler)
-	rBalanceOperation.Get("/api/user/balance", balanceOperationhandler.GetBalanceHandler)
-	rBalanceOperation.Get("/api/user/withdrawals", balanceOperationhandler.GetWithdrawalsHandler)
-	rBalanceOperation.Post("/api/user/orders", balanceOperationhandler.CreateOrderHandler)
-	rBalanceOperation.Post("/api/user/balance/withdraw", balanceOperationhandler.WithdrawHandler)
-	rMain.Mount("/", rBalanceOperation)
-
-	err = http.ListenAndServe(config.RunAddress, rMain)
+	err = http.ListenAndServe(config.RunAddress, r)
 	return err
 }
 
-// func runMigrate(config *config.Config) error {
-// 	db, err := sql.Open("postgres", config.DatabaseURI)
-// 	if err != nil {
-// 		panic(err)
-// 	}
-// 	driver, err := postgres.WithInstance(db, &postgres.Config{})
-// 	if err != nil {
-// 		panic(err)
-// 	}
-// 	m, err := migrate.NewWithDatabaseInstance(
-// 		"file://../../migrations",
-// 		"postgres", driver)
-// 	if err != nil {
-// 		panic(err)
-// 	}
-// 	err = m.Up()
-// 	if err != nil {
-// 		panic(err)
-// 	}
-// 	return err
-// }
+func runJobs(cxt context.Context, config *config.Config, balanceOperationRepo repository.BalanceOperationRepository) {
+	balanceOperationJob := job.NewBalanceOperationJob(config, balanceOperationRepo, webapi.NewAccrualWebAPI(config))
+	go balanceOperationJob.ConsumeOrder(cxt)
+	go balanceOperationJob.ProduceOrder(cxt)
+}
+
+func getRouter(userH *handlers.UserHandler, securityM *middleware.SecurityMiddleware, balanceH *handlers.BalanceOperationHandler) *chi.Mux {
+	rMain := chi.NewRouter()
+	rMain.Post("/api/user/register", userH.RegisterHandler)
+	rMain.Post("/api/user/login", userH.LoginHandler)
+	rBalanceOperation := chi.NewRouter()
+	rBalanceOperation.Use(securityM.SecurityMiddleware)
+	rBalanceOperation.Get("/api/user/orders", balanceH.GetOrdersHandler)
+	rBalanceOperation.Get("/api/user/balance", balanceH.GetBalanceHandler)
+	rBalanceOperation.Get("/api/user/withdrawals", balanceH.GetWithdrawalsHandler)
+	rBalanceOperation.Post("/api/user/orders", balanceH.CreateOrderHandler)
+	rBalanceOperation.Post("/api/user/balance/withdraw", balanceH.WithdrawHandler)
+	rMain.Mount("/", rBalanceOperation)
+	return rMain
+}
