@@ -40,20 +40,20 @@ type CompressionMiddleware interface {
 	CompressionMiddleware(h http.Handler) http.Handler
 }
 
-func Start(cxt context.Context, config *config.Config) error {
-	err := initTables(cxt, config.Pool)
+func Start(ctx context.Context, config *config.Config) error {
+	err := initTables(ctx, config.Pool)
 	if err != nil {
 		return err
 	}
 
-	userRepo, err := repository.NewUserRepository(cxt, config)
+	userRepo, err := repository.NewUserRepository(ctx, config)
 	if err != nil {
 		return err
 	}
 	userService := usecase.NewUserService(config, userRepo)
 	userHandler := handlers.NewUserHandler(config, userService)
 
-	balanceOperationRepo, err := repository.NewBalanceOperationRepository(cxt, config)
+	balanceOperationRepo, err := repository.NewBalanceOperationRepository(ctx, config)
 	if err != nil {
 		return err
 	}
@@ -61,7 +61,7 @@ func Start(cxt context.Context, config *config.Config) error {
 	balanceOperationhandler := handlers.NewBalanceOperationHandler(config, balanceOperationService, userService)
 	securityMiddleware := middleware.NewSecurityMiddleware(userService)
 
-	runJobs(cxt, config, balanceOperationRepo)
+	runJobs(ctx, config, balanceOperationRepo)
 
 	r := getRouter(userHandler, securityMiddleware, balanceOperationhandler)
 
@@ -69,10 +69,10 @@ func Start(cxt context.Context, config *config.Config) error {
 	return err
 }
 
-func runJobs(cxt context.Context, config *config.Config, balanceOperationRepo repository.BalanceOperationRepository) {
+func runJobs(ctx context.Context, config *config.Config, balanceOperationRepo repository.BalanceOperationRepository) {
 	balanceOperationJob := job.NewBalanceOperationJob(config, balanceOperationRepo, webapi.NewAccrualWebAPI(config))
-	go balanceOperationJob.ConsumeOrder(cxt)
-	go balanceOperationJob.ProduceOrder(cxt)
+	go balanceOperationJob.ConsumeOrder(ctx)
+	go balanceOperationJob.ProduceOrder(ctx)
 }
 
 func getRouter(userH *handlers.UserHandler, securityM *middleware.SecurityMiddleware, balanceH *handlers.BalanceOperationHandler) *chi.Mux {

@@ -26,8 +26,8 @@ func (r *BalanceOperationRepository) SaveOrder(ctx context.Context, balanceOpera
 	if err != nil {
 		return err
 	}
-	shouldReturn, err := r.saveWithTx(ctx, tx, balanceOperation)
-	if shouldReturn {
+	err = r.saveWithTx(ctx, tx, balanceOperation)
+	if err != nil {
 		return err
 	}
 	tx.Commit(ctx)
@@ -122,15 +122,15 @@ func (r *BalanceOperationRepository) SaveWithdraw(ctx context.Context, balanceOp
 	if balanceOperation.Sum*(-1) > current {
 		return customerr.NewError(errors.New("current balance < withdraw"), http.StatusPaymentRequired)
 	}
-	shouldReturn, err := r.saveWithTx(ctx, tx, balanceOperation)
-	if shouldReturn {
+	err = r.saveWithTx(ctx, tx, balanceOperation)
+	if err != nil {
 		return err
 	}
 	tx.Commit(ctx)
 	return nil
 }
 
-func (*BalanceOperationRepository) saveWithTx(ctx context.Context, tx pgx.Tx, balanceOperation *entity.BalanceOperation) (bool, error) {
+func (*BalanceOperationRepository) saveWithTx(ctx context.Context, tx pgx.Tx, balanceOperation *entity.BalanceOperation) error {
 	query := `
 		with ins as (
 			insert into "balance_operation" ("order", "status", "type", "user_id", "sum") values($1, $2, $3, $4, $5) on conflict("order") where "deleted_at" is null do nothing returning id
@@ -143,15 +143,15 @@ func (*BalanceOperationRepository) saveWithTx(ctx context.Context, tx pgx.Tx, ba
 	var userID int
 	err := row.Scan(&userID)
 	if err != nil {
-		return true, customerr.NewError(err, http.StatusInternalServerError)
+		return customerr.NewError(err, http.StatusInternalServerError)
 	}
 	if userID != 0 {
 		if userID == balanceOperation.UserID {
-			return true, customerr.NewError(errors.New("order is already saved"), http.StatusOK)
+			return customerr.NewError(errors.New("order is already saved"), http.StatusOK)
 		}
-		return true, customerr.NewError(errors.New("order is already saved for another user"), http.StatusConflict)
+		return customerr.NewError(errors.New("order is already saved for another user"), http.StatusConflict)
 	}
-	return false, nil
+	return nil
 }
 
 func (r *BalanceOperationRepository) FindOrdersToProcess(ctx context.Context) ([]*entity.BalanceOperation, error) {
