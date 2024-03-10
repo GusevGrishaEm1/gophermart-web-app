@@ -39,7 +39,7 @@ func TestMain(m *testing.M) {
 	ctx := context.Background()
 	testDB := SetupTestDatabase()
 	conf := &config.Config{}
-	conf.Pool = testDB.DbInstance
+	conf.Pool = testDB.DBInstance
 	err := initTables(ctx, conf.Pool)
 	if err != nil {
 		return
