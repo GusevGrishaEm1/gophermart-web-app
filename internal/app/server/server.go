@@ -3,6 +3,7 @@ package server
 import (
 	"context"
 	"net/http"
+	"os"
 
 	"github.com/GusevGrishaEm1/gophermart-web-app.git/internal/app/config"
 	handlers "github.com/GusevGrishaEm1/gophermart-web-app.git/internal/app/controller/http"
@@ -11,6 +12,7 @@ import (
 	"github.com/GusevGrishaEm1/gophermart-web-app.git/internal/app/infrastructure/webapi"
 	"github.com/GusevGrishaEm1/gophermart-web-app.git/internal/app/usecase"
 	"github.com/GusevGrishaEm1/gophermart-web-app.git/internal/app/usecase/job"
+	log "github.com/go-kit/log"
 
 	"github.com/go-chi/chi"
 )
@@ -61,9 +63,18 @@ func Start(ctx context.Context, config *config.Config) error {
 	balanceOperationhandler := handlers.NewBalanceOperationHandler(config, balanceOperationService, userService)
 	securityMiddleware := middleware.NewSecurityMiddleware(userService)
 
+	var logger log.Logger
+	logger = log.NewLogfmtLogger(log.NewSyncWriter(os.Stderr))
+	logger = log.With(logger, "ts", log.DefaultTimestampUTC, "loc", log.DefaultCaller)
+	loggingMiddleware := middleware.NewLoggingMiddleware(logger)
+
+	compressionMiddleware := middleware.NewCompressionMiddleware()
+
 	runJobs(ctx, config, balanceOperationRepo)
 
 	r := getRouter(userHandler, securityMiddleware, balanceOperationhandler)
+	r.Use(loggingMiddleware.LoggingMiddleware)
+	r.Use(compressionMiddleware.CompressionMiddleware)
 
 	err = http.ListenAndServe(config.RunAddress, r)
 	return err

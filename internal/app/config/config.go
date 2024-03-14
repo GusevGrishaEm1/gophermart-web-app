@@ -16,7 +16,6 @@ type Config struct {
 	RunAddress          string
 	DatabaseURI         string
 	AcrualSystemAddress string
-	IsMigrate           bool
 	Pool                *pgxpool.Pool
 }
 
@@ -54,7 +53,4 @@ func (c *Config) setByFlags() {
 	var acrualSystemAddress string
 	flag.StringVar(&acrualSystemAddress, "r", "http://localhost:8080", "accrual system address")
 	c.AcrualSystemAddress = acrualSystemAddress
-	var isMigrate bool
-	flag.BoolVar(&isMigrate, "m", false, "is migrate")
-	c.IsMigrate = isMigrate
 }
