@@ -48,7 +48,7 @@ func (c *Config) setByFlags() {
 	flag.StringVar(&runAddress, "a", "localhost:8081", "run address")
 	c.RunAddress = runAddress
 	var databaseURI string
-	flag.StringVar(&databaseURI, "d", "postgresql://user:user@localhost:5432/gophermart", "database URI")
+	flag.StringVar(&databaseURI, "d", "postgresql://test:test@localhost:5432/test", "database URI")
 	c.DatabaseURI = databaseURI
 	var acrualSystemAddress string
 	flag.StringVar(&acrualSystemAddress, "r", "http://localhost:8080", "accrual system address")

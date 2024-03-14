@@ -72,7 +72,7 @@ func Start(ctx context.Context, config *config.Config) error {
 
 	runJobs(ctx, config, balanceOperationRepo)
 
-	r := getRouter(userHandler, securityMiddleware, balanceOperationhandler)
+	r := getRouter(userHandler, securityMiddleware, loggingMiddleware, compressionMiddleware, balanceOperationhandler)
 	r.Use(loggingMiddleware.LoggingMiddleware)
 	r.Use(compressionMiddleware.CompressionMiddleware)
 
@@ -86,8 +86,10 @@ func runJobs(ctx context.Context, config *config.Config, balanceOperationRepo re
 	go balanceOperationJob.ProduceOrder(ctx)
 }
 
-func getRouter(userH *handlers.UserHandler, securityM *middleware.SecurityMiddleware, balanceH *handlers.BalanceOperationHandler) *chi.Mux {
+func getRouter(userH UserHandler, securityM SecurityMiddleware, loggingM LoggingMiddleware, compressionM CompressionMiddleware, balanceH BalanceOperationHandler) *chi.Mux {
 	rMain := chi.NewRouter()
+	rMain.Use(compressionM.CompressionMiddleware)
+	rMain.Use(loggingM.LoggingMiddleware)
 	rMain.Post("/api/user/register", userH.RegisterHandler)
 	rMain.Post("/api/user/login", userH.LoginHandler)
 	rBalanceOperation := chi.NewRouter()
