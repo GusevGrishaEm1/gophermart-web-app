@@ -43,10 +43,10 @@ type CompressionMiddleware interface {
 }
 
 func Start(ctx context.Context, config *config.Config) error {
-	err := initTables(ctx, config.Pool)
-	if err != nil {
-		return err
-	}
+	// err := initTables(ctx, config.Pool)
+	// if err != nil {
+	// 	return err
+	// }
 
 	userRepo, err := repository.NewUserRepository(ctx, config)
 	if err != nil {
@@ -73,8 +73,6 @@ func Start(ctx context.Context, config *config.Config) error {
 	runJobs(ctx, config, balanceOperationRepo)
 
 	r := getRouter(userHandler, securityMiddleware, loggingMiddleware, compressionMiddleware, balanceOperationhandler)
-	r.Use(loggingMiddleware.LoggingMiddleware)
-	r.Use(compressionMiddleware.CompressionMiddleware)
 
 	err = http.ListenAndServe(config.RunAddress, r)
 	return err
