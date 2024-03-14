@@ -43,10 +43,10 @@ type CompressionMiddleware interface {
 }
 
 func Start(ctx context.Context, config *config.Config) error {
-	// err := initTables(ctx, config.Pool)
-	// if err != nil {
-	// 	return err
-	// }
+	err := initTables(ctx, config.Pool)
+	if err != nil {
+		return err
+	}
 
 	userRepo, err := repository.NewUserRepository(ctx, config)
 	if err != nil {
