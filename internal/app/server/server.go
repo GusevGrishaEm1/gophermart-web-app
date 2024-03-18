@@ -61,6 +61,7 @@ func Start(ctx context.Context, config *config.Config) error {
 	}
 	balanceOperationService := usecase.NewBalanceOperationService(config, balanceOperationRepo)
 	balanceOperationhandler := handlers.NewBalanceOperationHandler(config, balanceOperationService, userService)
+
 	securityMiddleware := middleware.NewSecurityMiddleware(userService)
 
 	var logger log.Logger
